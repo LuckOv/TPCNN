@@ -1,7 +1,9 @@
-streamlit
-torch
-torchvision
-pillow
-numpy
-matplotlib
-streamlit-drawable-canvas
+matplotlib>=3.10.9
+numpy>=2.4.6
+pillow>=12.2.0
+streamlit>=1.58.0
+streamlit-drawable-canvas>=0.9.0
+torch>=2.12.0
+torchmetrics>=1.9.0
+torchvision>=0.27.0
+tqdm>=4.67.3

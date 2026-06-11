@@ -5,10 +5,203 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import numpy as np
-import gradcam
+from matplotlib.patches import Rectangle
 from PIL import Image
 from streamlit_drawable_canvas import st_canvas
-from modelo_cnn import CNN
+from src import gradcam
+from src.model import CNN
+
+
+# ------------------ FUNCIÓN PARA ANIMACIÓN DE CONVOLUCIÓN ------------------
+def mostrar_convolucion_interactiva():
+    """Muestra una animación interactiva de cómo un filtro recorre la imagen."""
+    st.markdown("### 🎬 ¿Cómo funciona la convolución?")
+    st.markdown("""
+    Un **filtro (kernel)** se desliza sobre la imagen realizando multiplicaciones y sumas.
+    Cada posición genera un valor que forma el **mapa de características**.
+    """)
+    
+    # Crear una imagen de ejemplo (un dígito 8 simple)
+    img_ejemplo = np.zeros((28, 28))
+    # Dibujar un 8 simple
+    for i in range(28):
+        for j in range(28):
+            # Círculo superior
+            dist_sup = np.sqrt((i-9)**2 + (j-14)**2)
+            # Círculo inferior
+            dist_inf = np.sqrt((i-19)**2 + (j-14)**2)
+            if dist_sup < 5 or dist_inf < 5:
+                img_ejemplo[i, j] = 1.0
+            # Línea conectora
+            if abs(i - 14) < 3 and j > 11 and j < 17:
+                img_ejemplo[i, j] = 1.0
+            # Pequeño ruido para más realismo
+            if dist_sup < 6 or dist_inf < 6:
+                img_ejemplo[i, j] = max(img_ejemplo[i, j], 0.9)
+    
+    # Crear un filtro simple (detector de bordes horizontales)
+    filtro = np.array([
+        [-1, -1, -1],
+        [0, 0, 0],
+        [1, 1, 1]
+    ])
+    
+    col_anim1, col_anim2 = st.columns(2)
+    
+    with col_anim1:
+        st.markdown("**Imagen original (dígito 8 de ejemplo)**")
+        fig_img, ax_img = plt.subplots(figsize=(4, 4))
+        ax_img.imshow(img_ejemplo, cmap='gray')
+        ax_img.set_title("Imagen 28x28 píxeles")
+        ax_img.axis('off')
+        st.pyplot(fig_img)
+        plt.close(fig_img)
+        
+        st.markdown("**Filtro (kernel) 3x3 - Detector de bordes horizontales**")
+        fig_filtro, ax_filtro = plt.subplots(figsize=(3, 3))
+        ax_filtro.imshow(filtro, cmap='RdBu', vmin=-1, vmax=1)
+        for i in range(3):
+            for j in range(3):
+                ax_filtro.text(j, i, f"{filtro[i, j]:.0f}", ha='center', va='center', color='white', fontsize=12)
+        ax_filtro.set_title("Kernel 3x3")
+        ax_filtro.axis('off')
+        st.pyplot(fig_filtro)
+        plt.close(fig_filtro)
+    
+    with col_anim2:
+        st.markdown("**🎮 Simula el movimiento del filtro**")
+        st.markdown("El filtro recorre TODA la imagen, pero puedes explorar posiciones específicas:")
+        
+        # Posiciones disponibles: desde 0 hasta 25 (para imagen 28x28 con kernel 3x3, stride=1)
+        pos_x = st.slider("Posición X (columna)", 0, 25, 12, key="conv_x")
+        pos_y = st.slider("Posición Y (fila)", 0, 25, 12, key="conv_y")
+        
+        # Mostrar la posición del filtro en la imagen
+        fig_pos, ax_pos = plt.subplots(figsize=(5, 5))
+        ax_pos.imshow(img_ejemplo, cmap='gray')
+        
+        # Dibujar cuadrado del filtro
+        from matplotlib.patches import Rectangle
+        rect = Rectangle((pos_x-0.5, pos_y-0.5), 3, 3, 
+                          fill=False, edgecolor='red', linewidth=2)
+        ax_pos.add_patch(rect)
+        
+        # Marcar el centro
+        ax_pos.plot(pos_x+1, pos_y+1, 'r+', markersize=12, linewidth=2)
+        
+        ax_pos.set_title(f"Filtro en posición ({pos_x}, {pos_y})")
+        ax_pos.axis('off')
+        st.pyplot(fig_pos)
+        plt.close(fig_pos)
+    
+    # Calcular y mostrar la región y el resultado
+    st.markdown("---")
+    st.markdown("### 🔢 ¿Qué calcula el filtro en esta posición?")
+    
+    # Extraer la región de la imagen (asegurar límites)
+    region = img_ejemplo[pos_y:pos_y+3, pos_x:pos_x+3]
+    # Calcular la convolución (suma de elementos multiplicados)
+    resultado = np.sum(region * filtro)
+    
+    col_calc1, col_calc2, col_calc3 = st.columns(3)
+    
+    with col_calc1:
+        st.markdown("**Región de la imagen (3x3)**")
+        fig_reg, ax_reg = plt.subplots(figsize=(3, 3))
+        ax_reg.imshow(region, cmap='gray', vmin=0, vmax=1)
+        for i in range(3):
+            for j in range(3):
+                ax_reg.text(j, i, f"{region[i, j]:.2f}", ha='center', va='center', 
+                           color='white' if region[i, j] < 0.6 else 'black', fontsize=8)
+        ax_reg.axis('off')
+        st.pyplot(fig_reg)
+        plt.close(fig_reg)
+    
+    with col_calc2:
+        st.markdown("**Filtro (kernel)**")
+        fig_fil2, ax_fil2 = plt.subplots(figsize=(3, 3))
+        ax_fil2.imshow(filtro, cmap='RdBu', vmin=-1, vmax=1)
+        for i in range(3):
+            for j in range(3):
+                ax_fil2.text(j, i, f"{filtro[i, j]:.0f}", ha='center', va='center', color='white', fontsize=12)
+        ax_fil2.axis('off')
+        st.pyplot(fig_fil2)
+        plt.close(fig_fil2)
+    
+    with col_calc3:
+        st.markdown("**Multiplicación elemento a elemento**")
+        st.markdown("Región × Filtro:")
+        resultado_matriz = region * filtro
+        st.text("")
+        for i in range(3):
+            fila_texto = "  ".join([f"{resultado_matriz[i, j]:+5.2f}" for j in range(3)])
+            st.code(fila_texto, language="text")
+        st.markdown(f"**SUMA TOTAL = {resultado:+.3f}**")
+    
+    st.info(f"""
+    💡 **Interpretación del resultado {resultado:+.3f}**:  
+    - Si es **positivo alto (> 1.0)**: El filtro detecta un borde horizontal fuerte.  
+    - Si es **cercano a 0**: No hay patrón coincidente.  
+    - Si es **negativo**: Detecta el patrón inverso (borde en dirección opuesta).  
+    
+    El filtro completo recorre la imagen generando un **mapa de características** de tamaño 26x26.
+    """)
+    
+    # Mostrar mapa de características completo
+    st.markdown("---")
+    st.markdown("### 🗺️ Mapa de características completo")
+    st.markdown("El filtro se aplica en CADA posición de la imagen. Así se ve el resultado final:")
+    
+    # Calcular la convolución completa (sin usar scipy para no agregar dependencias)
+    def convolucion_simple(imagen, kernel):
+        h, w = imagen.shape
+        kh, kw = kernel.shape
+        output_h = h - kh + 1
+        output_w = w - kw + 1
+        resultado = np.zeros((output_h, output_w))
+        for i in range(output_h):
+            for j in range(output_w):
+                resultado[i, j] = np.sum(imagen[i:i+kh, j:j+kw] * kernel)
+        return resultado
+    
+    mapa_caracteristicas = convolucion_simple(img_ejemplo, filtro)
+    
+    col_map1, col_map2 = st.columns(2)
+    with col_map1:
+        st.markdown("**Mapa de características**")
+        fig_map, ax_map = plt.subplots(figsize=(5, 5))
+        im = ax_map.imshow(mapa_caracteristicas, cmap='hot')
+        ax_map.set_title(f"Tamaño: {mapa_caracteristicas.shape[0]}x{mapa_caracteristicas.shape[1]}")
+        ax_map.axis('off')
+        plt.colorbar(im, ax=ax_map, shrink=0.7)
+        st.pyplot(fig_map)
+        plt.close(fig_map)
+    
+    with col_map2:
+        st.markdown("**Interpretación**")
+        st.markdown("""
+        - **Colores cálidos (rojo/amarillo)**: El filtro encontró bordes horizontales en esa zona.
+        - **Colores fríos (azul/negro)**: No se detectó el patrón.
+        - **Tamaño reducido**: La imagen pasó de 28×28 a 26×26 píxeles.
+        
+        🧠 **Esto es exactamente lo que hace nuestra CNN**:  
+        Aplica múltiples filtros (8 en la primera capa) que aprenden patrones como bordes, curvas y esquinas.  
+        Cada filtro genera un mapa de características, y la red combina esa información para reconocer el dígito.
+        """)
+    
+    # Explicación final
+    st.markdown("---")
+    st.markdown("""
+    ### 📚 Resumen visual del proceso completo
+    
+    1. **Filtro** (kernel) pequeño se desliza sobre la imagen
+    2. En cada posición: multiplica elemento a elemento
+    3. Suma los resultados → un solo número
+    4. Ese número va al mapa de características
+    5. El resultado final es una imagen más pequeña que resalta donde aparece el patrón
+    
+    **¡Así es como las redes convolucionales "ven" las imágenes!**
+    """)
 
 # Configuración de la página
 st.set_page_config(page_title="Reconocedor de Dígitos con CNN", layout="wide")
@@ -16,9 +209,25 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # ------------------ CARGA DEL MODELO (cache) ------------------
 @st.cache_resource
-def load_model():
+def load_model() -> CNN:
     model = CNN(in_channels=1, num_classes=10)
-    model.load_state_dict(torch.load("MulticlassCNN.pth", map_location="cpu"))
+    try:
+        state = torch.load("MulticlassCNN.pth", map_location="cpu", weights_only=True)
+        model.load_state_dict(state)
+    except FileNotFoundError:
+        st.error("""
+        **Archivo `MulticlassCNN.pth` no encontrado.**
+        Ejecutá `python train.py` en la terminal para entrenar el modelo primero.
+        """)
+        st.stop()
+    except (RuntimeError, KeyError) as e:
+        st.error(f"""
+        **Error al cargar los pesos del modelo.**
+        Posiblemente el archivo `MulticlassCNN.pth` corresponde a una versión anterior de la arquitectura.
+        Ejecutá `python train.py` para reentrenar el modelo.
+        Detalle: {e}
+        """)
+        st.stop()
     model.eval()
     return model
 
@@ -163,7 +372,11 @@ elif seccion == "🧠 ¿Qué es una CNN?":
     with col1[0]:
          st.markdown("### Visualización de capas y filtros utilizados en nuetro modelo")
          st.image("assets/diagramaNuestraCNN.png", caption="Diagrama de capas y filtros de nuestra CNN", width=800)
-
+         
+        # ========== ANIMACIÓN INTERACTIVA DE CONVOLUCIÓN ==========
+    # Llamar a la función que muestra la animación
+    mostrar_convolucion_interactiva()
+    
 # =============================================================================
 # SECCIÓN 3: CÓMO SE ENTRENA (gráficos y simulación)
 # =============================================================================
@@ -313,14 +526,14 @@ else:  # "✍️ Prueba el modelo"
                 act_conv1 = model.act_conv1[0]
                 act_conv2 = model.act_conv2[0]
 
-            def norm_act(act):
+            def norm_act(act: torch.Tensor) -> np.ndarray:
                 act = act.cpu().numpy()
                 return (act - act.min()) / (act.max() - act.min() + 1e-8)
 
             act1_norm = norm_act(act_conv1)
             act2_norm = norm_act(act_conv2)
 
-            def plot_filters(filters, title, max_show=8):
+            def plot_filters(filters: np.ndarray, title: str, max_show: int = 8) -> None:
                 n = min(filters.shape[0], max_show)
                 cols = min(n, 8)
                 rows = (n + 7) // 8
