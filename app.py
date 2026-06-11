@@ -62,82 +62,107 @@ if seccion == "🤖 ¿Qué es la IA?":
 elif seccion == "🧠 ¿Qué es una CNN?":
     st.title("🧠 Red Neuronal Convolucional (CNN)")
     st.markdown("""
-    Una CNN es un modelo de IA diseñado para **procesar imágenes**. Se inspira en el sistema visual de los animales.
 
-    ### Arquitectura de nuestra CNN
+    ## ¿Qué son y para qué sirven?
+    Las redes neuronales convolucionales, conocidas como CNN, son sistemas informáticos que buscan patrones en datos para clasificarlos. Su característica principal es que trabajan específicamente con imágenes.
+    En esta aplicación, la red recibe miles de imágenes de entrenamiento del conjunto de datos MNIST. A partir de estas imágenes, la red aprende a identificar las características únicas de cada dígito (del 0 al 9) para poder reconocer correctamente cualquier número. Por ejemplo, al terminar su aprendizaje, la red puede distinguir cuando una imagen contiene el dígito 6.
+    
+    ## ¿Cómo funcionan?
+    Las CNN imitan la forma en que el cerebro humano procesa las imágenes. Nuestro cerebro divide este proceso en varias capas especializadas:
+
+    - **Primera capa**: detecta patrones simples como líneas y bordes
+    - **Segunda capa**: conecta esos patrones para formar figuras
+    - **Capas intermedias**: identifican características cada vez más complejas
+    - **Capa final**: combina toda la información y determina qué objeto es
+
+    **Las CNN funcionan de manera similar**: comienzan extrayendo líneas y bordes, y conforme avanzan, combinan estos elementos para identificar el objeto completo en la imagen.
+    
+    ## Cómo las computadoras representan las imágenes
+    Las imágenes digitales se almacenan como matrices de píxeles. Cada píxel tiene un valor numérico que va de 0 (oscuro) a 255 (blanco), pasando por todos los tonos de gris.
+        *Por ejemplo, una imagen de 28x28 píxeles se representa como una matriz de 28 filas y 28 columnas, donde cada elemento es un número que indica la intensidad del píxel. En nuestro caso, como trabajamos con imágenes en escala de grises, cada píxel tiene un solo valor (en lugar de tres para RGB).*
+    
+    """)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("### Ejemplo de imagen MNIST")
+        st.image("assets/8.png", caption="Ejemplo de imagen MNIST (28x28 píxeles)", width=300)
+    with col2:
+        st.markdown("### Representación numérica")
+        st.image("assets/8M.png", caption="Matriz de píxeles (28x28)", width=300)
+        
+    st.markdown ("""
+    ## Estructura de una Red Convolucional
+    ### Una CNN sigue este proceso:
+
+    - **Entrada**: se recibe la imagen digital
+    - **Capas convolucionales**: extraen características mediante filtros especializados. Cada filtro se enfoca en detectar un patrón diferente (líneas, curvas, texturas, etc.)
+    - **Capas de reducción (Max Pooling)**: reducen el tamaño de la imagen, conservando solo la información más importante
+    - **Repetición**: este proceso se repite varias veces. Con cada iteración, la imagen se hace más pequeña, pero la red detecta características más complejas
+    - **Capas finales (Fully Connected y Softmax)**: toman todas las características extraídas y las clasifican, decidiendo qué objeto o número contiene la imagen
+    """)
+    
+    col1 = st.columns(1)
+    with col1[0]:
+         st.markdown("### Visualización de capas y filtros")
+         st.image("assets/diagramaGeneralCNN.png", caption="Ejemplo de filtros aprendidos por una CNN", width=800)
+
+    st.markdown("""
+                
+    ### Los filtros: el elemento clave
+    Los filtros *(también llamados kernels)* son matrices de números que "barren" la imagen para extraer características. Durante el entrenamiento, estos números se ajustan automáticamente para capturar mejor los patrones importantes.
+    La convolución es el proceso de aplicar estos filtros a la imagen. Por ejemplo, un filtro puede estar diseñado para detectar bordes, mientras que otro detecta esquinas. Al aplicar múltiples filtros, la red obtiene una visión completa de las características presentes en la imagen.
+
     """)
 
-    # Diagrama estático (reutilizamos la función)
-    def draw_architecture():
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.axis('off')
-        blocks = [
-            ("Entrada\n28x28x1", (0, 0.5)),
-            ("Conv1 + ReLU\n8 filtros\n3x3", (1, 0.5)),
-            ("MaxPool\n2x2", (2, 0.5)),
-            ("Conv2 + ReLU\n16 filtros\n3x3", (3, 0.5)),
-            ("MaxPool\n2x2", (4, 0.5)),
-            ("Aplanar\n16*7*7", (5, 0.5)),
-            ("Densa (FC)\n10 salidas", (6, 0.5)),
-            ("Softmax\nDígito", (7, 0.5))
-        ]
-        for texto, (x, y) in blocks:
-            ax.text(x, y, texto, ha='center', va='center',
-                    bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.7), fontsize=10)
-            if x < 7:
-                ax.annotate('', xy=(x+0.8, y), xytext=(x+0.2, y), arrowprops=dict(arrowstyle='->', lw=1.5))
-        ax.set_xlim(-0.5, 8)
-        ax.set_ylim(0, 1)
-        return fig
+    st.markdown("""        
+    ## Arquitectura de nuestra CNN
+    #AGREGAR LEYENDAS CON LAS CAPAS Y FILTROS DE CADA CAPA COMO ESTABA EN EL GRAFICO ANTERIOR
+    
+    Nuestra CNN tiene la siguiente estructura:
+    1. **Primer equipo de observadores (Capa convolucional 1)**: 
+    Tenemos 8 "detectores" que buscan patrones muy simples en la imagen: 
+    esquinas, líneas rectas, puntos. Es como tener 8 personas mirando la imagen 
+    desde diferentes ángulos para buscar detalles básicos.
 
-    st.pyplot(draw_architecture())
-    st.caption("Arquitectura: Convolución → Pooling → Convolución → Pooling → Capa densa → Softmax")
+    2. **Amplificador (ReLU)**: 
+    Cuando encontramos algo interesante, lo amplificamos. Ignoramos los detalles 
+    débiles para enfocarnos solo en lo importante (como subir el volumen de una 
+    conversación importante).
 
-    # Botones interactivos para explicar cada parte
-    st.subheader("🔍 Haz clic en cualquier bloque para entenderlo")
-    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+    3. **Comprimidor inteligente (MaxPooling)**: 
+    La imagen es muy grande. Tomamos pequeños cuadrados y nos quedamos solo con 
+    el detalle más importante de cada uno. Esto reduce el tamaño a la mitad, 
+    haciendo todo más rápido sin perder lo esencial.
 
-    explicaciones = {
-        "entrada": "📥 **Entrada**: Imagen en escala de grises de 28x28 píxeles. Cada píxel tiene un valor entre 0 (negro) y 1 (blanco).",
-        "conv1": "🔍 **Capa convolucional 1**: Aplica 8 filtros de 3x3 que detectan bordes, líneas y curvas. Genera 8 mapas de 28x28.",
-        "relu1": "⚡ **ReLU**: Convierte valores negativos a cero. Introduce no linealidad para aprender patrones complejos.",
-        "pool1": "📉 **MaxPooling 1**: Reduce el tamaño a 14x14 tomando el máximo en regiones 2x2. Hace el modelo robusto a deformaciones.",
-        "conv2": "🔍 **Capa convolucional 2**: Aplica 16 filtros de 3x3 sobre los 8 mapas anteriores. Combina patrones simples en formas más complejas.",
-        "relu2": "⚡ **ReLU**: Igual que antes, aplicada a la segunda convolución.",
-        "pool2": "📉 **MaxPooling 2**: Reduce a 7x7. Ahora tenemos 16 mapas de 7x7.",
-        "flatten": "📄 **Aplanamiento**: Convierte los 16*7*7 = 784 valores en un vector de 784 números.",
-        "fc": "🧠 **Capa densa**: 10 neuronas (una por dígito). Cada neurona asigna una puntuación.",
-        "softmax": "🎯 **Softmax**: Convierte puntuaciones en probabilidades (suman 1). El dígito con mayor probabilidad es la predicción."
-    }
+    4. **Segundo equipo de observadores (Capa convolucional 2)**: 
+    Ahora tenemos 16 "detectores" más sofisticados que buscan patrones complejos: 
+    curves, combinaciones de líneas, formas que parecen dígitos. Trabajamos con 
+    los resultados del equipo anterior.
 
-    with col1:
-        if st.button("📥 Entrada", key="btn_entrada"):
-            st.session_state["explicacion_cnn"] = explicaciones["entrada"]
-    with col2:
-        if st.button("🔍 Conv1+ReLU", key="btn_conv1"):
-            st.session_state["explicacion_cnn"] = explicaciones["conv1"] + "\n\n" + explicaciones["relu1"]
-    with col3:
-        if st.button("📉 Pool1", key="btn_pool1"):
-            st.session_state["explicacion_cnn"] = explicaciones["pool1"]
-    with col4:
-        if st.button("🔍 Conv2+ReLU", key="btn_conv2"):
-            st.session_state["explicacion_cnn"] = explicaciones["conv2"] + "\n\n" + explicaciones["relu2"]
-    with col5:
-        if st.button("📉 Pool2", key="btn_pool2"):
-            st.session_state["explicacion_cnn"] = explicaciones["pool2"]
-    with col6:
-        if st.button("📄 Aplanar", key="btn_flatten"):
-            st.session_state["explicacion_cnn"] = explicaciones["flatten"]
-    with col7:
-        if st.button("🧠 Densa", key="btn_fc"):
-            st.session_state["explicacion_cnn"] = explicaciones["fc"]
-    with col8:
-        if st.button("🎯 Softmax", key="btn_softmax"):
-            st.session_state["explicacion_cnn"] = explicaciones["softmax"]
+    5. **Amplificador (ReLU)**: 
+    Nuevamente, amplificamos lo importante.
 
-    if "explicacion_cnn" not in st.session_state:
-        st.session_state["explicacion_cnn"] = "👆 Haz clic en cualquier bloque para conocer su función."
-    st.info(st.session_state["explicacion_cnn"])
+    6. **Comprimidor (MaxPooling)**: 
+    Comprimimos una vez más hasta detalles muy pequeños.
+
+    7. **Desenrollador (Aplanar)**: 
+    Convertimos toda la información visual en una larga lista de números 
+    (como convertir una foto en código de barras).
+
+    8. **Tomador de decisión final (Capa densa)**: 
+    Tenemos 10 "jueces", uno para cada dígito (0 al 9). Cada juez mira toda 
+    la información y da su opinión: "Esto parece un 3" o "Podría ser un 8".
+
+    9. **Conversor de opiniones (Softmax)**: 
+    Convertimos las opiniones en probabilidades reales. Por ejemplo: 
+    "80% seguro de que es un 3, 15% de que es un 8, 5% otras opciones".
+    """)
+    
+    col1 = st.columns(1)
+    with col1[0]:
+         st.markdown("### Visualización de capas y filtros utilizados en nuetro modelo")
+         st.image("assets/diagramaNuestraCNN.png", caption="Diagrama de capas y filtros de nuestra CNN", width=800)
 
 # =============================================================================
 # SECCIÓN 3: CÓMO SE ENTRENA (gráficos y simulación)
@@ -253,14 +278,11 @@ else:  # "✍️ Prueba el modelo"
             if show_gradcam:
                 with st.spinner("Generando mapa de calor explicativo..."):
                     tensor_grad = tensor.clone().detach().requires_grad_(True).to(device)
-                    model.train()
-                    model.enable_gradcam()
                     model.zero_grad()
-                    output_grad = model(tensor_grad)
+                    with torch.enable_grad():
+                        output_grad = model(tensor_grad)
                     output_grad[0, pred].backward()
-                    heatmap = gradcam.generate_gradcam_heatmap(model, tensor_grad, pred)
-                    model.eval()
-                    model.disable_gradcam()
+                    heatmap = gradcam.generate_gradcam_heatmap(model)
 
                     col_g1, col_g2, col_g3 = st.columns(3)
                     with col_g1:
@@ -288,8 +310,8 @@ else:  # "✍️ Prueba el modelo"
         if canvas_result.image_data is not None:
             with torch.no_grad():
                 _ = model(tensor)
-                act_conv1 = model.act_conv1[0]  # [8,28,28]
-                act_conv2 = model.act_conv2[0]  # [16,14,14]
+                act_conv1 = model.act_conv1[0]
+                act_conv2 = model.act_conv2[0]
 
             def norm_act(act):
                 act = act.cpu().numpy()
@@ -298,23 +320,21 @@ else:  # "✍️ Prueba el modelo"
             act1_norm = norm_act(act_conv1)
             act2_norm = norm_act(act_conv2)
 
-            st.markdown("##### Capa 1 (8 filtros)")
-            fig1, axes = plt.subplots(2, 4, figsize=(8, 4))
-            for i, ax in enumerate(axes.flat):
-                if i < 8:
-                    ax.imshow(act1_norm[i], cmap='hot')
-                    ax.set_title(f'Filtro {i}')
-                ax.axis('off')
-            st.pyplot(fig1)
+            def plot_filters(filters, title, max_show=8):
+                n = min(filters.shape[0], max_show)
+                cols = min(n, 8)
+                rows = (n + 7) // 8
+                st.markdown(f"##### {title} ({filters.shape[0]} filtros, mostrando {n})")
+                fig, axes = plt.subplots(rows, cols, figsize=(2 * cols, 2 * rows))
+                for i, ax in enumerate(axes.flat if n > 1 else [axes]):
+                    if i < n:
+                        ax.imshow(filters[i], cmap='hot')
+                        ax.set_title(f'Filtro {i}')
+                    ax.axis('off')
+                st.pyplot(fig)
 
-            st.markdown("##### Capa 2 (16 filtros) - primeros 8")
-            fig2, axes = plt.subplots(2, 4, figsize=(8, 4))
-            for i, ax in enumerate(axes.flat):
-                if i < 8:
-                    ax.imshow(act2_norm[i], cmap='hot')
-                    ax.set_title(f'Filtro {i}')
-                ax.axis('off')
-            st.pyplot(fig2)
+            plot_filters(act1_norm, "Capa 1 (conv1)")
+            plot_filters(act2_norm, "Capa 2 (conv3)")
 
             st.caption("""
             **Interpretación**: Cada filtro resalta diferentes partes del número (bordes, curvas, ángulos).  
