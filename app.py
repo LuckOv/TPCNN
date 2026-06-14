@@ -381,9 +381,20 @@ elif seccion == "🧠 ¿Qué es una CNN?":
 # SECCIÓN 3: CÓMO SE ENTRENA (gráficos y simulación)
 # =============================================================================
 elif seccion == "📊 ¿Cómo se entrena?":
+    # ---------- EXPLICACIÓN TEÓRICA ----------
+    st.title("📊 Entrenamiento de la CNN")
+    st.markdown("El entrenamiento de una red neuronal convolucional implica ajustar los pesos y sesgos de la red para minimizar la diferencia entre las predicciones y las etiquetas reales.")
+       
     # ---------- SIMULACIÓN INTERACTIVA ----------
     st.subheader("📈 Simulación interactiva del aprendizaje")
     st.markdown("Ajusta los parámetros y observa cómo mejora la red durante el entrenamiento.")
+    st.markdown("""
+        - **Número de épocas**: Cuántas veces la red ve todo el conjunto de entrenamiento. Más épocas = más aprendizaje, pero cuidado con el sobreajuste. Si sobreajustamos la red es incapaz de analizar correctamente nuevas imágenes, ya que se ha "memorizado" demasiado los ejemplos de entrenamiento. Ajustar este parámetro te permite ver cómo la red mejora con más práctica, pero también cómo puede empezar a fallar si se le da demasiada información.
+        
+        - **Tasa de aprendizaje (learning rate)**: Qué tan rápido la red ajustaa sus pesos. Un valor muy alto puede hacer que la red no aprenda bien, mientras que uno muy bajo puede hacer que el entrenamiento sea muy lento. El valor alto hace que la red aprenda rápido pero puede pasar por alto detalles importantes, mientras que un valor bajo hace que la red aprenda lentamente pero con más precisión. Ajustar este parámetro te permite ver cómo afecta la velocidad y calidad del aprendizaje.
+        
+        - **Ruido (variabilidad)**: Simula la incertidumbre y las oscilaciones reales del entrenamiento. Un poco de ruido hace que la simulación sea más realista, mostrando cómo la pérdida y precisión pueden fluctuar antes de estabilizarse. Un entrenamiento igual a 0 sería un laboratorio de experimentos perfecto, pero en la vida real siempre hay algo de ruido. Ajustar este parámetro te permite que el entrenamiento sea más similar a lo que ocurre en la vida real, con sus altibajos y sorpresas.
+    """)
 
     col_sim1, col_sim2, col_sim3 = st.columns(3)
     with col_sim1:
@@ -430,14 +441,12 @@ elif seccion == "📊 ¿Cómo se entrena?":
     else:
         st.info("Presiona el botón 'Simular entrenamiento' para ver cómo evolucionan la pérdida y la precisión.")
 
-    # Mantén el resto de la sección (imagen y explicación fija) como estaba:
-    st.markdown("### 📉 Pérdida vs 📈 Precisión real del modelo entrenado")
-    st.image("https://miro.medium.com/v2/resize:fit:1400/1*_1t6N0PxLrHq4e4Qk8KkAw.png", caption="Curvas típicas de entrenamiento", width=500)
     st.markdown("""
     - **Pérdida (loss)**: Mide qué tan equivocada está la red. Queremos que baje.
     - **Precisión (accuracy)**: Porcentaje de aciertos. Queremos que suba.
-    - Nuestro modelo logró **98.57%** de precisión en datos de prueba.
-    """)
+    - **Precisión final**: Con un buen entrenamiento, la red puede alcanzar un porcentaje más alto de precisión en MNIST, lo que significa que reconoce correctamente la mayoría de los dígitos. Sin embargo, el resultado exacto puede variar según los parámetros elegidos y la cantidad de ruido en la simulación.
+    """)  
+    
 # =============================================================================
 # SECCIÓN 4: PRUEBA EL MODELO (canvas + predicción + Grad-CAM + mapas de activación)
 # =============================================================================
