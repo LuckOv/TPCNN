@@ -249,21 +249,49 @@ seccion = st.sidebar.radio(
 if seccion == "🤖 ¿Qué es la IA?":
     st.title("🤖 Inteligencia Artificial (IA)")
     st.markdown("""
-    La **Inteligencia Artificial** es un campo de la computación que busca crear sistemas capaces de realizar tareas que normalmente requieren inteligencia humana, como:
-    - Reconocer imágenes y sonidos
-    - Tomar decisiones
-    - Aprender de la experiencia
+    ### Definición de Inteligencia Artificial
+    La Inteligencia Artificial (IA) es un programa de computadora que puede realizar tareas que normalmente requerirían inteligencia humana.
+    
+    Piénsenlo así: un ajedrecista humano analiza el tablero, reconoce patrones, anticipa movimientos del rival y toma decisiones. Una IA de ajedrez (como AlphaZero) hace exactamente lo mismo, pero procesando información a velocidad electrónica.
+    
+    ## Ejemplos cotidianos:
+    - El asistente de voz que responde preguntas (Siri, Alexa)
+    - El filtro de spam en tu email
+    - La recomendación de películas en Netflix
+    - Los autos que conducen solos
+
+    *Lo clave: la IA automatiza decisiones y tareas inteligentes, no reemplaza la inteligencia humana.*
 
     ### ¿Cómo aprende una IA?
-    Una IA aprende a partir de **datos**. En lugar de programar reglas explícitas (si ves un círculo, entonces es un 0), le mostramos miles de ejemplos y ella misma descubre los patrones.
+    Una IA no nace sabiendo cosas. Aprende de ejemplos, similar a cómo aprendemos ustedes.
+    
+    ## El proceso básico:
+    1. Se le muestran muchos ejemplos → Un detector de correos spam ve miles de correos: algunos legítimos, otros basura.
+    2. Identifica patrones → "Hmm, los correos spam suelen tener palabras como 'gana dinero', 'urgente', 'click aquí'..."
+    3. Ajusta sus reglas internas → La IA dice: "Voy a ponderar más estas palabras como indicadores de spam".
+    4. Prueba con ejemplos nuevos → Se le muestra un correo que nunca vio antes y tiene que decidir: ¿spam o no spam?
+    5. Mejora con retroalimentación → Si se equivoca, aprende del error.
 
+    *Analogía: Es como aprender a reconocer frutas. Al principio no sabes qué es una manzana. Pero si alguien te muestra 100 manzanas rojas, verdes, grandes y pequeñas, tu cerebro capta el patrón: "Ah, esto es una manzana". Después reconoces una manzana nueva aunque nunca la hayas visto.*
+        
     ### Tipos de IA
-    - **IA débil**: Diseñada para una tarea específica (reconocer dígitos, jugar ajedrez).
-    - **IA fuerte**: (teórica) igual o superior a la humana.
+    Existen varias maneras de clasificar las IA. Les doy dos enfoques útiles:
+        
+    ## Por nivel de capacidad:
+    - IA Débil (Narrow AI): Especializada en una sola tarea. Hace UNA cosa muy bien. Un programa que solo juega ajedrez.
+    - IA Fuerte (General AI): Podría hacer cualquier tarea inteligente, como un humano. No existe aún es teórica.
+    - IA Super (ASI): Hipotética. Más inteligente que cualquier humano. Ciencia ficción (por ahora).
+        
+    *Realidad actual: Todas las IA que existen hoy son débiles. ChatGPT habla de muchos temas, pero sigue siendo especializada en tareas de lenguaje.*
+        
+    ## Por técnica de aprendizaje:
+        
+    - **Aprendizaje Supervisado**: Se entrena con ejemplos etiquetados ("esto es gato", "esto es perro"). Reconocimiento facial, diagnóstico médico.
+    - **Aprendizaje No Supervisado**: Encuentra patrones en datos sin etiquetas previas. Agrupar clientes por comportamiento de compra.
+    - **Aprendizaje por Refuerzo**: Aprende mediante ensayo-error, ganando "recompensas" por buenas acciones. AlphaGo jugando ajedrez, robots aprendiendo a caminar.
 
-    Nuestra aplicación usa una **Red Neuronal Convolucional (CNN)**, un tipo de IA débil especializada en visión por computadora.
+    **Nuestra aplicación usa una **Red Neuronal Convolucional (CNN)**, un tipo de IA débil especializada en visión por computadora.**
     """)
-    st.image("https://www.ibm.com/content/dam/connectedassets-adobe-cms/worldwide-content/creative-assets/s-migr/ul/g/8a/ai-article.png", caption="La IA imita el aprendizaje humano", width=400)
 
 # =============================================================================
 # SECCIÓN 2: QUÉ ES UNA CNN (con partes interactivas)
