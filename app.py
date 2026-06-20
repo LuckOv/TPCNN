@@ -503,10 +503,6 @@ else:  # "✍️ Prueba el modelo"
             img_pil = Image.fromarray(img[:, :, 0])
             img_pil = img_pil.resize((28, 28))
 
-            invert = st.checkbox("Invertir colores (si el fondo es blanco)", value=False)
-            if invert:
-                img_pil = Image.eval(img_pil, lambda x: 255 - x)
-
             st.image(img_pil, caption="Imagen redimensionada a 28x28", width=100)
 
             transform = transforms.ToTensor()
