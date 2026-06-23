@@ -2,6 +2,15 @@
 
 Aplicación educativa interactiva que implementa una **Red Neuronal Convolucional (CNN)** para reconocer dígitos manuscritos del dataset **MNIST** (0-9). Construida con **PyTorch** y **Streamlit**, incluye visualizaciones didácticas del funcionamiento de las CNN y explicaciones sobre inteligencia artificial.
 
+## Datos del equipo y la institución
+
+- Integrantes: Ariel Colatto, Lucas Oviedo, Coral Tolazzi
+- Cuatrimestre y Año: 1er Cuatrimestre del 2026
+- Institución: Instituto Superior de Formación Técnica N°197 (Instituto Tecnológico Beltrán) 
+- Área: Departamento de Ciencia y Tecnología
+- Materia: Modelización de Sistemas de IA
+- Docente: Alejandro Luis Bonavita
+
 ## Requisitos
 
 - Python 3.9+
