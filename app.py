@@ -81,7 +81,6 @@ def mostrar_convolucion_interactiva():
         ax_pos.imshow(img_ejemplo, cmap='gray')
         
         # Dibujar cuadrado del filtro
-        from matplotlib.patches import Rectangle
         rect = Rectangle((pos_x-0.5, pos_y-0.5), 3, 3, 
                           fill=False, edgecolor='red', linewidth=2)
         ax_pos.add_patch(rect)
@@ -228,6 +227,7 @@ def load_model() -> CNN:
         Detalle: {e}
         """)
         st.stop()
+    model.to(device)
     model.eval()
     return model
 
@@ -290,7 +290,7 @@ if seccion == "🤖 ¿Qué es la IA?":
     - **Aprendizaje No Supervisado**: Encuentra patrones en datos sin etiquetas previas. Agrupar clientes por comportamiento de compra.
     - **Aprendizaje por Refuerzo**: Aprende mediante ensayo-error, ganando "recompensas" por buenas acciones. AlphaGo jugando ajedrez, robots aprendiendo a caminar.
 
-    **Nuestra aplicación usa una **Red Neuronal Convolucional (CNN)**, un tipo de IA débil especializada en visión por computadora.**
+    Nuestra aplicación usa una **Red Neuronal Convolucional (CNN)**, un tipo de IA débil especializada en visión por computadora.
     """)
 
 # =============================================================================
@@ -354,8 +354,7 @@ elif seccion == "🧠 ¿Qué es una CNN?":
 
     st.markdown("""        
     ## Arquitectura de nuestra CNN
-    #AGREGAR LEYENDAS CON LAS CAPAS Y FILTROS DE CADA CAPA COMO ESTABA EN EL GRAFICO ANTERIOR
-    
+
     Nuestra CNN tiene la siguiente estructura:
     
     1. **Entrada (Imagen 28x28)**: ingresan imágenes de dígitos escritos a mano, cada una de 28x28 píxeles en escala de grises.
@@ -401,11 +400,10 @@ elif seccion == "🧠 ¿Qué es una CNN?":
     
     col1 = st.columns(1)
     with col1[0]:
-         st.markdown("### Visualización de capas y filtros utilizados en nuetro modelo")
-         st.image("assets/diagramaNuestraCNN.png", caption="Diagrama de capas y filtros de nuestra CNN", width=800)
-         
-        # ========== ANIMACIÓN INTERACTIVA DE CONVOLUCIÓN ==========
-    # Llamar a la función que muestra la animación
+        st.markdown("### Visualización de capas y filtros utilizados en nuestro modelo")
+        st.image("assets/diagramaNuestraCNN.png", caption="Diagrama de capas y filtros de nuestra CNN", width=800)
+
+    # ========== ANIMACIÓN INTERACTIVA DE CONVOLUCIÓN ==========
     mostrar_convolucion_interactiva()
     
 # =============================================================================
@@ -587,7 +585,7 @@ else:  # "✍️ Prueba el modelo"
                 st.pyplot(fig)
 
             plot_filters(act1_norm, "Capa 1 (conv1)")
-            plot_filters(act2_norm, "Capa 2 (conv3)")
+            plot_filters(act2_norm, "Capa 3 (conv3)")
 
             st.caption("""
             **Interpretación**: Cada filtro resalta diferentes partes del número (bordes, curvas, ángulos).  
