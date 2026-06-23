@@ -357,41 +357,44 @@ elif seccion == "🧠 ¿Qué es una CNN?":
     #AGREGAR LEYENDAS CON LAS CAPAS Y FILTROS DE CADA CAPA COMO ESTABA EN EL GRAFICO ANTERIOR
     
     Nuestra CNN tiene la siguiente estructura:
-    1. **Primer equipo de observadores (Capa convolucional 1)**: 
+    
+    1. **Entrada (Imagen 28x28)**: ingresan imágenes de dígitos escritos a mano, cada una de 28x28 píxeles en escala de grises.
+    
+    2. **Primer equipo de observadores (Capa convolucional 1)**: 
     Tenemos 8 "detectores" que buscan patrones muy simples en la imagen: 
     esquinas, líneas rectas, puntos. Es como tener 8 personas mirando la imagen 
     desde diferentes ángulos para buscar detalles básicos.
 
-    2. **Amplificador (ReLU)**: 
+    3. **Amplificador (ReLU)**: 
     Cuando encontramos algo interesante, lo amplificamos. Ignoramos los detalles 
     débiles para enfocarnos solo en lo importante (como subir el volumen de una 
     conversación importante).
 
-    3. **Comprimidor inteligente (MaxPooling)**: 
+    4. **Comprimidor inteligente (MaxPooling)**: 
     La imagen es muy grande. Tomamos pequeños cuadrados y nos quedamos solo con 
     el detalle más importante de cada uno. Esto reduce el tamaño a la mitad, 
     haciendo todo más rápido sin perder lo esencial.
 
-    4. **Segundo equipo de observadores (Capa convolucional 2)**: 
+    5. **Segundo equipo de observadores (Capa convolucional 2)**: 
     Ahora tenemos 16 "detectores" más sofisticados que buscan patrones complejos: 
     curves, combinaciones de líneas, formas que parecen dígitos. Trabajamos con 
     los resultados del equipo anterior.
 
-    5. **Amplificador (ReLU)**: 
+    6. **Amplificador (ReLU)**: 
     Nuevamente, amplificamos lo importante.
 
-    6. **Comprimidor (MaxPooling)**: 
+    7. **Comprimidor (MaxPooling)**: 
     Comprimimos una vez más hasta detalles muy pequeños.
 
-    7. **Desenrollador (Aplanar)**: 
+    8. **Desenrollador (Aplanar)**: 
     Convertimos toda la información visual en una larga lista de números 
     (como convertir una foto en código de barras).
 
-    8. **Tomador de decisión final (Capa densa)**: 
+    9. **Tomador de decisión final (Capa densa)**: 
     Tenemos 10 "jueces", uno para cada dígito (0 al 9). Cada juez mira toda 
     la información y da su opinión: "Esto parece un 3" o "Podría ser un 8".
 
-    9. **Conversor de opiniones (Softmax)**: 
+    10. **Conversor de opiniones (Softmax)**: 
     Convertimos las opiniones en probabilidades reales. Por ejemplo: 
     "80% seguro de que es un 3, 15% de que es un 8, 5% otras opciones".
     """)
